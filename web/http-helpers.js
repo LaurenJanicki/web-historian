@@ -20,22 +20,33 @@ var getExtension = function(filename) {
   return filename.split('.').pop();
 }
 
-exports.serveAssets = function(res, asset, callback) {
-  var extension = getExtension(asset);
-  res.setHeader('Content-Type', extensions[extension]);
-  fs.readFile(path.join(archive.paths.siteAssets, asset), function(err, data) {
+var serveFile = function(res, filename, callback) {
+  fs.readFile(filename, function(err, data) {
     if (err) {
-      res.statusCode = 404;
-      res.end('File not found');
+      callback();
     } else {
       res.end(data);
     }
   });
+};
+
+exports.serveAssets = function(res, asset, callback) {
+  var extension = getExtension(asset);
+
+  if (extension in extensions) {
+    res.setHeader('Content-Type', extensions[extension]);
+  }
+
+  serveFile(res, path.join(archive.paths.siteAssets, asset), callback);
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
 };
 
+exports.serveArchives = function(res, asset, callback) {
+  res.setHeader('Content-Type', 'text/html');
+  serveFile(res, path.join(archive.paths.archivedSites, asset), callback);
+};
 
 
 // As you progress, keep thinking about what helper functions you can put here!
