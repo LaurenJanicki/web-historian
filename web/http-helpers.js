@@ -10,7 +10,27 @@ exports.headers = headers = {
   'Content-Type': "text/html"
 };
 
+var extensions = {
+  html: "text/html",
+  css: "text/css",
+  ico: "image/x-icon"
+};
+
+var getExtension = function(filename) {
+  return filename.split('.').pop();
+}
+
 exports.serveAssets = function(res, asset, callback) {
+  var extension = getExtension(asset);
+  res.setHeader('Content-Type', extensions[extension]);
+  fs.readFile(path.join(archive.paths.siteAssets, asset), function(err, data) {
+    if (err) {
+      res.statusCode = 404;
+      res.end('File not found');
+    } else {
+      res.end(data);
+    }
+  });
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
