@@ -14,7 +14,11 @@ var options = {
   },
   POST: function(req, res) {
     httpHelpers.getBody(req, function(body) {
-      var url = JSON.parse(body).url;
+      try {
+        var url = JSON.parse(body).url;
+      } catch (e) {
+        var url = body.split('=').pop();
+      }
       archive.isUrlArchived(url, function(exists) {
         if (exists) {
           httpHelpers.redirect(res, '/' + url);
