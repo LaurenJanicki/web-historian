@@ -48,5 +48,17 @@ exports.serveArchives = function(res, asset, callback) {
   serveFile(res, path.join(archive.paths.archivedSites, asset), callback);
 };
 
+exports.getBody = function(req, callback) {
+  var body = '';
+
+  req.on('data', function(chunk) {
+    body += chunk;
+  });
+
+  req.on('end', function() {
+    callback(body);
+  });
+};
+
 
 // As you progress, keep thinking about what helper functions you can put here!
