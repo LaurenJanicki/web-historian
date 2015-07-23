@@ -60,5 +60,11 @@ exports.getBody = function(req, callback) {
   });
 };
 
+exports.redirect = function(res, location) {
+  res.statusCode = 302;
+  res.setHeader('Location', location);
+  res.end();
+}
+
 
 // As you progress, keep thinking about what helper functions you can put here!

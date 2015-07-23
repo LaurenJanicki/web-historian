@@ -17,17 +17,16 @@ var options = {
       var url = JSON.parse(body).url;
       archive.isUrlArchived(url, function(exists) {
         if (exists) {
-          res.statusCode = 302;
-          res.setHeader('Location', '/' + url);
-          res.end();
+          httpHelpers.redirect(res, '/' + url);
         } else {
           archive.isUrlInList(url, function(exists) {
             if (! exists) {
-              archive.addUrlToList(url);
+              archive.addUrlToList(url, function() {
+                httpHelpers.redirect(res, "/loading.html");
+              });
+            } else {
+              httpHelpers.redirect(res, "/loading.html");
             }
-            res.statusCode = 302;
-            res.setHeader('Location', "/loading.html");
-            res.end();
           });
         }
       });
